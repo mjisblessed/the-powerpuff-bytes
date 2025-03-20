@@ -1,18 +1,17 @@
 import {request, response} from 'express';
 import dotenv from 'dotenv';
-import User from '../models/users.model.js';
-import userDetail from '../models/userDetail.model.js';
+import User from '../models/userModel.js';
 dotenv.config();
 
 export const viewProfile = async (request, response) => {
     //get 
     const useremail = request.user.email;
     try {
-        const findDetails = await userDetail.findOne( {email: useremail});
+        const findDetails = await User.findOne( {email: useremail});
         const data = {
-            name: request.user.name,
+            firstName: request.user.firstName,
+            lastName: request.user.lastName,
             email: request.user.email,
-            domain: findDetails.domain,
             phoneNumber: findDetails.phoneNumber
         }
         console.log("user details successfully fetched");
@@ -54,7 +53,7 @@ export const editProfile = async(request, response) => {
                 else {
                     //second db se call
                     console.log(user[key]);
-                    const result = await userDetail.updateOne( {
+                    const result = await User.updateOne( {
                         email: useremail,
                     }, {
                         $set: {
