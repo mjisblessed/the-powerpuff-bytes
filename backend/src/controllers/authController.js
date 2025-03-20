@@ -1,8 +1,7 @@
 import {request, response} from 'express';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import User from '../models/users.model.js';
-import UserDetail from '../models/userDetail.model.js';
+import User from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
 import { JWT_SECRET } from '../middleware/verifyToken.js';
 
@@ -24,7 +23,8 @@ export const signup1 =  async (request, response) => {
         const hashedPassword = await bcrypt.hash(request.body.password, 10);
 
         const data = new User({
-            name: request.body.name, 
+            firstName: request.body.firstName,
+            lastName: request.body.lastName, 
             email : request.body.email,
             role : "mentee",
             password: hashedPassword,
@@ -32,7 +32,8 @@ export const signup1 =  async (request, response) => {
         const result = await data.save();
         
         const token = jwt.sign({ 
-            name: data.name, 
+            firstName: data.firstName,
+            lastName: data.lastName, 
             email: data.email,
             role: data.role
          }, JWT_SECRET, { expiresIn: "2h",}
@@ -59,7 +60,6 @@ export const signup2 = async (request, response) => {
 
         const data = new UserDetail({
             email: email,
-            domain: request.body.domain,
             phoneNumber: request.body.phoneNumber,
         })
 
@@ -95,7 +95,8 @@ export const login = async (request, response) => {
 
 
         const token = jwt.sign({ 
-            name: existingUser.name, 
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName, 
             email: existingUser.email,
             role: role
          }, JWT_SECRET, { expiresIn: "2h",}

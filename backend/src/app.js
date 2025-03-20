@@ -8,6 +8,10 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profRoutes.js';
 import forgotPassword from './routes/forgotPassword.js';
+import path from "path";
+import { fileURLToPath } from "url";
+import postRoutes from "./routes/postRoutes.js";
+
 
 import roleRoutes from './routes/roleRoutes.js';
 
@@ -39,6 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/check", roleRoutes);
 app.use("/api/pass_reset",forgotPassword);
+app.use("/posts", postRoutes);
 
 
 // Start server
