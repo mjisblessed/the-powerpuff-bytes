@@ -2,6 +2,7 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './Components/Login/Login';
+import Homepage from './Components/Homepage/Homepage';
 
 
 function App() {
@@ -9,6 +10,10 @@ function App() {
     {
       path: "/",
       element: <><Login /></>
+    },
+    {
+      path: "/Homepage",
+      element: <><Homepage /></>
     },
   ]);
 
