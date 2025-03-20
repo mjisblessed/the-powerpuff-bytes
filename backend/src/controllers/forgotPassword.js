@@ -18,11 +18,7 @@ export const sendOTP = async (req, res) => {
     // Generate OTP
     const otp = crypto.randomBytes(3).toString('hex'); 
     console.log("otp : ",otp);
-    const expires = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
-
-    // //creating temporary jwt token for password reset 
-    // const tempToken = jwt.sign({email},JWT_SECRET,{expiresIn:'15m'});
-    // console.log("Temp token generated:", tempToken);
+    const expires = Date.now() + 10 * 60 * 1000; 
 
     const passwordReset = new Pw_Reset({
       email,

@@ -6,10 +6,6 @@ const loginSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        sid: {
-            type: Number,
-            required: true
-        },
         email: {
             type: String,
             required: true

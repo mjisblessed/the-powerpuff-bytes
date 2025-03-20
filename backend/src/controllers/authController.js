@@ -14,12 +14,6 @@ export const signup1 =  async (request, response) => {
     console.log("Request Body:", request.body);
 
     try {
-        const existingSid = await User.findOne({sid: request.body.sid });
-        if (existingSid) {
-            console.log("A User with this sid already exists!");
-            return response.status(400).send("A User with this sid already exists!");
-        }
-
         const existingUser = await User.findOne({ email: request.body.email });
         if (existingUser) {
             console.log("Cannot use the same email more than once!");
@@ -31,16 +25,14 @@ export const signup1 =  async (request, response) => {
 
         const data = new User({
             name: request.body.name, 
-            sid : request.body.sid,
             email : request.body.email,
-            role : "student",
+            role : "mentee",
             password: hashedPassword,
         });
         const result = await data.save();
         
         const token = jwt.sign({ 
-            name: data.name,
-            sid: data.sid, 
+            name: data.name, 
             email: data.email,
             role: data.role
          }, JWT_SECRET, { expiresIn: "2h",}
@@ -56,20 +48,19 @@ export const signup1 =  async (request, response) => {
 };
 
 export const signup2 = async (request, response) => {
-    let sid = request.user.sid;
-    console.log(sid);
+    let email = request.user.email;
+    console.log(email);
     try {
-        const existingSid = await UserDetail.findOne({ sid: sid });
-        if (existingSid) {
-            console.log("A User with this sid already exists!");
-            return response.status(400).send("A User with this sid already exists!");
+        const existingEmail = await UserDetail.findOne({ email : email });
+        if (existingEmail) {
+            console.log("A User with this email already exists!");
+            return response.status(400).send("A User with this email already exists!");
         }
 
         const data = new UserDetail({
-            sid: sid,
-            branch: request.body.branch,
+            email: email,
+            domain: request.body.domain,
             phoneNumber: request.body.phoneNumber,
-            parentsNumber: request.body.parentsNumber
         })
 
         const result = await data.save();
@@ -97,15 +88,14 @@ export const login = async (request, response) => {
             return response.status(400).send("Incorrect password!");
         }
 
-        let role = "student";
-        if (request.body.email === "warden@example.com" || request.body.email === "warden2@example.com"
-            || request.body.email === "warden3@example.com")
-                role = "warden"
+        let role = "mentee";
+        if (request.body.email === "mentor@example.com" || request.body.email === "mentor2@example.com"
+            || request.body.email === "mentor3@example.com")
+                role = "mentor"
 
 
         const token = jwt.sign({ 
-            name: existingUser.name,
-            sid: existingUser.sid, 
+            name: existingUser.name, 
             email: existingUser.email,
             role: role
          }, JWT_SECRET, { expiresIn: "2h",}

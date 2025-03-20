@@ -5,7 +5,7 @@ dotenv.config();
 
 export const checkRole = async (request, response) => {
     const role = request.user.role;
-    if (role !== "warden") {
+    if (role !== "mentor") {
         response.json({"message": "access denied!"});
     }
     else

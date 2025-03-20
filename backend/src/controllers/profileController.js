@@ -5,17 +5,15 @@ import userDetail from '../models/userDetail.model.js';
 dotenv.config();
 
 export const viewProfile = async (request, response) => {
-    //get hai ye toh
-    const usersid = request.user.sid;
+    //get 
+    const useremail = request.user.email;
     try {
-        const findDetails = await userDetail.findOne( {sid: usersid});
+        const findDetails = await userDetail.findOne( {email: useremail});
         const data = {
             name: request.user.name,
-            sid: usersid,
             email: request.user.email,
-            branch: findDetails.branch,
-            phoneNumber: findDetails.phoneNumber,
-            parentsNumber: findDetails.parentsNumber
+            domain: findDetails.domain,
+            phoneNumber: findDetails.phoneNumber
         }
         console.log("user details successfully fetched");
         response.status(200).send(data);
@@ -27,16 +25,16 @@ export const viewProfile = async (request, response) => {
 
 export const editProfile = async(request, response) => {
     //request.body me aayega jo change hona hai
-    const usersid = request.user.sid;
+    const useremail = request.user.email;
     const user = request.body;
     try {   
         for (const key in user) {
             if (user.hasOwnProperty(key)) {
-                if (key === 'name' || key === 'sid' || key === 'email') {
+                if (key === 'name' || key === 'email') {
                     //first db se call
                     console.log(user[key]);
                     const result = await User.updateOne( {
-                        sid: usersid,
+                        email: useremail,
                     }, {
                         $set: {
                             [key]: user[key]
@@ -44,7 +42,7 @@ export const editProfile = async(request, response) => {
                     })
                     
                     if (result.matchedCount === 0) {
-                        console.log(`No User found with sid: ${usersid}`);
+                        console.log(`No User found with email: ${useremail}`);
                     }
                     
                     if (result.modifiedCount == 0) {
@@ -57,7 +55,7 @@ export const editProfile = async(request, response) => {
                     //second db se call
                     console.log(user[key]);
                     const result = await userDetail.updateOne( {
-                        sid: usersid,
+                        email: useremail,
                     }, {
                         $set: {
                             [key]: user[key]
@@ -65,7 +63,7 @@ export const editProfile = async(request, response) => {
                     })
 
                     if (result.matchedCount === 0) {
-                        console.log(`No User found with sid: ${usersid}`);
+                        console.log(`No User found with sid: ${useremail}`);
                     }
 
                     if (result.modifiedCount == 0) {
