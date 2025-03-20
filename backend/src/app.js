@@ -11,6 +11,7 @@ import forgotPassword from './routes/forgotPassword.js';
 import path from "path";
 import { fileURLToPath } from "url";
 import postRoutes from "./routes/postRoutes.js";
+import usersRoutes from "./routes/usersRoutes.js";
 
 
 import roleRoutes from './routes/roleRoutes.js';
@@ -44,6 +45,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/check", roleRoutes);
 app.use("/api/pass_reset",forgotPassword);
 app.use("/posts", postRoutes);
+app.use("/users", usersRoutes);
 
 
 // Start server

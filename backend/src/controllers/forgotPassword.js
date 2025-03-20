@@ -7,7 +7,7 @@ import Pw_Reset from "../models/forgotPassword.model.js";
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
-import User from '../models/users.model.js'; 
+import User from '../models/userModel.js'; 
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../middleware/verifyToken.js';
 
