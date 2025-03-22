@@ -2,9 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/auth";
-import loginside from '../../Photos/loginside.jpg';
+import { initializeSocket, updateSocketToken, getSocket } from "../../store/socket";
+import loginside from '../../Photos/orange1.jpg';
+import { postToBackend } from "@/store/fetchdata";
 import { baseUrl } from "@/urls";
-import "./Login.css";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -25,8 +26,17 @@ const Login = () => {
             const response = await axios.post(`${baseUrl}/api/auth/login`, formData);
 
             const token = response.data.token;
-            storeTokeninLS(token); 
+            storeTokeninLS(token); // Store token in local storage
+            console.log(response.data);
 
+            // Initialize or update the socket
+            if (!getSocket()) {
+                initializeSocket(token); // Initialize the socket for the first time
+            } else {
+                updateSocketToken(token); // Update the token if socket already exists
+            }
+
+            // Navigate based on user role
             if (response.data.role === "warden") {
                 navigate("/WardenDash");
             } else {
@@ -45,9 +55,9 @@ const Login = () => {
                 alert("Please enter your email to reset the password.");
                 return;
             }            
-            await axios.post(`${baseUrl}/api/pass_reset/forgot-password`, { email });
+            const temp = await axios.post(`${baseUrl}/api/pass_reset/forgot-password`, { email });
             alert("Password reset link has been sent to your email.");
-            navigate('/otp-page');
+            navigate('/otp-page')
         } catch (error) {
             console.error(error.response?.data || "Failed to send password reset link");
             alert("Failed to send password reset link");
@@ -55,16 +65,23 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <div className="login-box">
-                <div className="login-image">
-                    <img src={loginside} alt="Login illustration" />
+        <div className="flex justify-center items-center min-h-screen bg-yellow-100">
+            <div className="bg-white shadow-md rounded-lg flex max-w-4xl w-full">
+                <div className="w-1/2 hidden lg:block shadow-lg shadow-yellow-700">
+                    <img
+                        src={loginside}
+                        alt="Login illustration"
+                        className="h-full w-full object-cover rounded-l-lg"
+                    />
                 </div>
-                <div className="login-form-container">
-                    <form className="login-form" onSubmit={handleSubmit}>
-                        <h2 className="login-title">Login</h2>
+
+                <div className="w-full lg:w-1/2 p-8 flex flex-col items-center justify-center space-y-6 shadow-lg shadow-yellow-700">
+                    <form className="space-y-6 w-full max-w-md" onSubmit={handleSubmit}>
+                        <h2 className="text-2xl font-semibold text-gray-800 text-center">Login</h2>
                         <div>
-                            <label htmlFor="email">Email:</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email:
+                            </label>
                             <input
                                 type="email"
                                 id="email"
@@ -73,10 +90,13 @@ const Login = () => {
                                 onChange={handleChange}
                                 placeholder="Enter your email"
                                 required
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:bg-yellow-100 focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                             />
                         </div>
                         <div>
-                            <label htmlFor="password">Password:</label>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Password:
+                            </label>
                             <input
                                 type="password"
                                 id="password"
@@ -85,17 +105,30 @@ const Login = () => {
                                 onChange={handleChange}
                                 placeholder="Enter your password"
                                 required
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:bg-yellow-100 focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                             />
                         </div>
-                        <button type="submit" className="login-button">Login</button>
-                        <button type="button" onClick={handleForgotPassword} className="forgot-button">
+                        <button
+                            type="submit"
+                            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+                        >
+                            Login
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="w-full bg-gray-200 text-yellow-500 py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 mt-4"
+                        >
                             Forgot Password
                         </button>
                     </form>
 
-                    <div className="signup-link">
-                        <p>
-                            Don't have an account? <a href="./SignUp">Sign Up</a>
+                    <div className="mt-4 text-center">
+                        <p className="text-sm text-gray-600">
+                            Don't have an account?{" "}
+                            <a href="./SignUp" className="text-yellow-600 font-medium hover:underline">
+                                Sign Up
+                            </a>
                         </p>
                     </div>
                 </div>
